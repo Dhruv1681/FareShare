@@ -1,0 +1,9 @@
+get:
+    tags:
+      - Users
+    summary: Get all users (except current user)
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        $ref: '../../components/components.yaml#/responses/GetUsersSuccess'

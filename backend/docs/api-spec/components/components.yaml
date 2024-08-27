@@ -1,0 +1,716 @@
+securitySchemes:
+  $ref: './security-schemes/security-schemes.yaml'
+
+parameters:
+  $ref: './parameters/path-params/group-id.path.param.yaml'
+
+  GroupIdQueryParam:
+    name: groupId
+    in: query
+    description: The ID of the group for which to retrieve informaiton.
+    required: false
+    schema:
+      type: string
+
+  SearchQueryParam:
+    name: search
+    in: query
+    description: The search term.
+    required: false
+    schema:
+      type: string
+  
+  FromDateQueryParam:
+    name: fromDate
+    in: query
+    description: Start date (YYYY-MM-DD).
+    required: false
+    schema:
+      type: string
+      format: date
+
+  ToDateQueryParam:
+    name: toDate
+    in: query
+    description: End date (YYYY-MM-DD).
+    required: false
+    schema:
+      type: string
+      format: date
+
+  CategoryQueryParam:
+    name: category
+    in: query
+    description: category name.
+    required: false
+    schema:
+      type: string
+  
+  
+  FilepathPathParam:
+    name: filePath
+    in: path
+    description: the file to retrieve from the server
+    required: true
+    schema:
+      type: string
+  ExpenseIdPathParam:
+    name: expenseId
+    in: path
+    description: The identifier of the expense
+    required: true
+    schema:
+      type: string    
+
+schemas:
+  ExpenseRequest:
+    type: object
+    properties:
+      description:
+        type: string
+      amount:
+        type: number
+      split:
+        type: string
+        enum:
+          - equal
+          - unequal
+          - shares
+          - percentage
+          - itemized
+      personalShare:
+        type: number
+      category:
+        type: string
+      groupId:
+        type: string
+      date:
+        type: string
+        format: date
+  GroupCreateRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      image:
+        type: string
+        format: binary
+      users:
+        type: object
+      grouptype:
+        type: string
+      settings:
+        type: string
+    required:
+      - name
+      - users
+      - grouptype
+      - settings
+  GroupFetchRequest:
+    type: object
+    properties: 
+      name:
+        type: string
+  GroupUpdateRequest:
+    type: object
+    properties: 
+      name: 
+        type: string
+  GroupDeleteRequest:
+    type: object
+    properties: 
+      name:
+        type: string
+  UserRegistrationRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+        format: email
+      nickname:
+        type: string
+    required:
+      - email
+      - username
+  SendOtpRequest:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+  UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        otp:
+          type: string
+      required:
+        - email
+        - otp
+
+responses:
+  UserRegistrationSuccess:
+    description: User successfully registered. OTP sent to the provided email.
+    content:
+      application/json:
+        examples:
+          userRegistrationSuccessExample:
+            value:
+              message: User successfully registered. OTP sent to the provided email.
+  InvalidRequest:
+    description: Invalid request. Check email format or missing required fields.
+    content:
+      application/json:
+        examples:
+          invalidRequestExample:
+            value:
+              error: Invalid request. Check email format or missing required fields.
+  UserAlreadyExists:
+    description: User with the provided email or username already exists.
+    content:
+      application/json:
+        examples:
+          userAlreadyExistsExample:
+            value:
+              error: User with the provided email or username already exists.
+  TooManyOTPs:
+    description: Too many OTPs generated. Please try again later.
+    content:
+      application/json:
+        examples:
+          tooManyOtpsExample:
+            value:
+              error: Too many OTPs generated. Please try again later.
+  UserLoginSuccess:
+    description: User successfully logged in. Bearer auth token sent in response.
+    content:
+      application/json:
+        examples:
+          userLoginSuccessExample:
+            value:
+              authToken: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  InvalidOTP:
+    description: Invalid OTP. Please check the OTP and try again.
+    content:
+      application/json:
+        examples:
+          invalidOtpExample:
+            value:
+              error: Invalid OTP. Please check the OTP and try again.
+  UserNotFound:
+    description: User not found. Please check the provided email and try again.
+    content:
+      application/json:
+        examples:
+          userNotFoundExample:
+            value:
+              error: User not found. Please check the provided email and try again.
+  OtpSent:
+    description: OTP successfully sent to the user's email
+    content:
+      application/json:
+        examples:
+          responses:
+            value:  
+              message: OTP Sent successfully
+  TooFastOTP:
+    description: OTP sent too fast. Please wait before requesting another OTP.
+    content:
+      application/json:
+        examples:
+          tooFastOtpExample:
+            value:
+              error: An error occurred while processing your request. Please try again.
+  LogoutSuccess:
+    description: User logged out successfully
+    content:
+      application/json:
+        examples:
+          responses:
+            value:  
+              message: User logged out successfully
+
+  LogoutUnauthorized:
+    description: Unauthorized - Bearer token not provided
+    content:
+      application/json:
+        examples:
+          responses:
+            value:  
+              message: Authentication Failed
+
+  AccountInfoSuccess:
+    description: User account information retrieved successfully
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              receiveGroupInvitationNotification: true
+              receiveFriendRequestNotification: false
+              receiveExpenseAddedNotification: true
+              receiveExpenseEditedDeletedNotification: false
+              receiveExpenseCommentNotification: true
+              receiveExpenseDueNotification: false
+              receivePaymentNotification: true
+              receiveMonthlySummaryNotification: false
+              receiveMajorUpdatesNotification: true
+
+  FriendsAddSuccess:
+    description: Add friends success
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+                id: 6577a09f1bc3d64b3fcb9d19
+                firstUser:
+                  id: 6577512aa4d86945ac8af578
+                  username: Dinesh
+                  email: shekhawat.dinesh@gmail.com
+                  nickname: Dinesh
+                  updatedOn: null
+                  createdOn: '2023-12-11T18:12:58.219Z'
+                secondUser:
+                  id: 65776f325aa0f0e7c4d7f8de
+                  username: Tanmay
+                  email: tanmay@test.com
+                  nickname: Tanmay
+                  updatedOn: null
+                  createdOn: '2023-12-11T20:21:06.625Z'
+                updatedOn: null
+                createdBy:
+                  id: 6577512aa4d86945ac8af578
+                  username: Dinesh
+                  email: shekhawat.dinesh@gmail.com
+                  nickname: Dinesh
+                  updatedOn: null
+                  createdOn: '2023-12-11T18:12:58.219Z'
+                updatedBy: null
+                createdOn: '2023-12-11T23:51:59.612Z'
+
+
+  FriendsDeleteSuccess:
+    description: Delete friends success
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+                message: Friend deleted succesfully
+
+  FriendNotFound:
+    description: Friend not found
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              message: Friend not found.
+
+  AccountDeletionSuccess:
+    description: User account deleted successfully
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              message: User account deleted successfully
+  AccountNotFound:
+    description: User account information not found
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              message: User account not found.
+
+  MontlySpendingTrends:
+    description: Monthly spending trends
+    content:
+      application/json:
+        examples:
+          response:
+            value:
+              - year: 2023
+                months:
+                  - month: January
+                    totalAmountPaid: 500.00
+                    type: 'equal'
+                    personalShare: 250.00
+                    categories:
+                      groceries:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                      entertainment:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                  - month: February
+                    totalAmountPaid: 500.00
+                    personalShare: 250.00
+                    categories:
+                      groceries:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                      entertainment:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+              - year: 2024
+                months:
+                  - month: January
+                    totalAmountPaid: 500.00
+                    personalShare: 250.00
+                    categories:
+                      groceries:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                      entertainment:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                  - month: February
+                    totalAmountPaid: 500.00
+                    personalShare: 250.00
+                    categories:
+                      groceries:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+                      entertainment:
+                        totalSpending: 150.00
+                        personalShare: 75.00
+
+  ApiAccessAnalyticsSuccess:
+    description: Successful response with API access analytics
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              data:
+              - apiEndpoint: "/expenses"
+                httpMethod: "GET"
+                responseCode: 200
+                accessCount: 5
+                lastAccessDate: "2023-01-15T10:30:00Z"
+                millisecondsTaken: 150
+              - userId: 123
+                apiEndpoint: "/payments"
+                httpMethod: "POST"
+                responseCode: 201
+                accessCount: 3
+                lastAccessDate: "2023-01-16T12:45:00Z"
+                millisecondsTaken: 200
+              meta:
+                  currentPage: 1
+                  pageSize: 10
+                  nextPage: 2
+
+  FileDownloadSuccess:
+    description: Successful response with file content
+    headers:
+      Content-Disposition:
+        description: 'Indicates that the response should be treated as an attachment and downloaded.'
+        schema:
+          type: string
+          default: 'attachment'
+    content:
+      application/octet-stream:
+        examples:
+          fileDownload:
+            summary: Example file download response
+            externalValue: 'url_to_example_file'
+
+  FileNotFound:
+    description: File not found. Also if user tries to access a file to which access is denied it will have same response.
+    content:
+      application/json:
+        example:
+          message: 'File not found'
+
+  GroupNotFound:
+    description: Not Found
+    content:
+      application/json:
+        examples:
+          responses:
+            value:  
+              message: Group Not Found
+  GroupSearchSuccess:
+    description: Successful search
+    content:
+      application/json:
+        example:
+            - id: 'grp-001'
+              name: 'A FairShare Group'
+              members:
+                - id: 'mem-001'
+                  name: 'John'
+                - id: 'mem-002'
+                  name: 'Richard'
+            - id: 'grp-002'
+              name: 'A New FairShare Group'
+              members:
+                - id: 'mem-001'
+                  name: 'John'
+                - id: 'mem-002'
+                  name: 'Richard'
+
+  GroupGetSuccess:
+    description: Successful get for a group
+    content:
+      application/json:
+        example:
+            response:
+              id: 'grp-001'
+              name: 'A FairShare Group'
+              members:
+                - id: 'mem-001'
+                  name: 'John'
+                - id: 'mem-002'
+                  name: 'Richard'
+
+
+  GroupCreateSuccess:
+    description: Resource created successfully
+    content:
+      application/json:
+        example:
+            group1:
+              id: 'grp-001'
+              name: 'A FairShare Group'
+              members:
+                - id: 'mem-001'
+                  name: 'John'
+                - id: 'mem-002'
+                  name: 'Richard'
+  GroupUpdateSuccess:
+    description: Group updated succesfully
+    content:
+      application/json:
+        examples:
+          responses:
+            value:  
+              message: Group updated successfully
+
+  GetActivitiesSuccess:
+    description: Successful response with activities data
+    content:
+      application/json:
+        example:
+          - date: '2023-12-15, 11:48PM'
+            entityDeleted: true
+            entityId: '123'
+            greenText: You are owed $5
+            id: '1'
+            redText: You owe $10
+            textData:
+            - bold: true
+              text: Tanmay
+            - bold: false
+              text: updated
+            - bold: true
+              text: Patel Roti
+            - bold: true
+              text: in
+            - bold: true
+              text: NEU Group
+            type: expense
+          - date: '2023-12-16, 02:30PM'
+            entityDeleted: false
+            entityId: '456'
+            greenText: You are owed $0
+            id: '2'
+            redText: You owe $25
+            textData:
+            - bold: true
+              text: Dinesh
+            - bold: false
+              text: added a new expense
+            - bold: true
+              text: Dinner with Friends
+            - bold: true
+              text: in
+            - bold: true
+              text: Personal
+            type: settlement
+          - date: '2023-12-15, 11:48PM'
+            entityDeleted: true
+            entityId: '123'
+            greenText: You are owed $5
+            id: '1'
+            redText: You owe $10
+            textData:
+            - bold: true
+              text: Tanmay
+            - bold: false
+              text: updated
+            - bold: true
+              text: Patel Roti
+            - bold: true
+              text: in
+            - bold: true
+              text: NEU Group
+            type: expense
+
+
+  GetUsersSuccess:
+    description: Successful response with users data
+    content:
+      application/json:
+        example:
+          - id: "65776f565aa0f0e7c4d7f8e4"
+            username: "Dhruv"
+            email: "dhruv@test.com"
+            nickname: "Dhruv"
+            updatedOn: null
+            createdOn: "2023-12-11T20:21:42.266Z"
+            
+          - id: "6577512aa4d86945ac8af578"
+            username: "Dinesh"
+            email: "shekhawat.dinesh@gmail.com"
+            nickname: "Dinesh"
+            updatedOn: null
+            createdOn: "2023-12-11T18:12:58.219Z"
+
+          - id: "65776f325aa0f0e7c4d7f8de"
+            username: "Tanmay"
+            email: "tanmay@test.com"
+            nickname: "Tanmay"
+            updatedOn: null
+            createdOn: "2023-12-11T20:21:06.625Z"
+
+
+  FriendsListSuccess:
+    description: Friends list retrieved successfully
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              - id: "65776f325aa0f0e7c4d7f8de"
+                username: Tanmay
+                email: tanmay@test.com
+                nickname: Tanmay
+                updatedOn: null
+                createdOn: "2023-12-11T20:21:06.625Z"
+
+              - id: "6577512aa4d86945ac8af578"
+                username: Dinesh
+                email: shekhawat.dinesh@gmail.com
+                nickname: Dinesh
+                updatedOn: null
+                createdOn: "2023-12-11T18:12:58.219Z"
+
+
+  ExpensesGetAllSuccess:
+    description: Successful response with expenses data
+    content:
+      application/json:
+        example:
+          data:
+            expenses:
+              - expenseId: 1
+                description: 'Dinner with friends'
+                amount: 50.00
+                type: 'equal'
+                personalShare: 35.0
+                category: 'Food'
+                date: '2023-01-15'
+              - expenseId: 2
+                description: 'Movie night'
+                amount: 20.00
+                personalShare: 0.0
+                category: 'Entertainment'
+                date: '2023-01-20'
+          meta:
+            currentPage: 1
+            pageSize: 10
+            nextPage: 2
+  ExpensesUpdateSuccess:
+    description: Successful response expense data updated
+    content:
+      application/json:
+        example:
+          data:
+              expenseId: 1
+              description: 'Dinner with friends'
+              amount: 50.00
+              type: 'equal'
+              personalShare: 35.0
+              category: 'Food'
+              date: '2023-01-15'        
+          message: Expense Updated successfully
+
+  ExpenseDeleteSuccess:
+    description: Expense delete successfull
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              message: Expense has been deleted successfully.
+
+  ExpenseDeleteNotFound:
+    description: Expense delete fail because of invalid identifier
+    content:
+      application/json:
+        examples:
+          responses:
+            value:
+              message: Expense not found.    
+
+  SplitEquallySuccess:
+    description: Expense split equally successfully.
+    content:
+      application/json:
+        example:
+          status: success
+          message: Expense split equally.
+
+  SplitExactAmountSuccess:
+    description: Expense split by exact amount successfully.
+    content:
+      application/json:
+        example:
+          status: success
+          message: Expense split by exact amount.
+
+  SplitByPercentageSuccess:
+    description: Expense split by percentage successfully.
+    content:
+      application/json:
+        example:
+          status: success
+          message: Expense split by percentage.
+
+  SplitByShareSuccess:
+    description: Expense split by share successfully.
+    content:
+      application/json:
+        example:
+          status: success
+          message: Expense split by share.
+
+  SplitByAdjustmentSuccess:
+    description: Expense split by adjustment successfully.
+    content:
+      application/json:
+        example:
+          status: success
+          message: Expense split by adjustment.
+
+  ErrorResponse:
+    description: An error occurred during the Splitwise operation.
+    content:
+      application/json:
+        example:
+          status: error
+          message: An error occurred. Please try again.
+

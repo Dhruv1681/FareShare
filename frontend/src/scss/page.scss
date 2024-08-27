@@ -1,0 +1,49 @@
+.arrow-up {
+    position: absolute;
+    bottom: 100%;
+    left: 60%;
+    border-width: 0.5rem;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
+}
+
+#navigation-bar {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+#topnav-icon {
+    width: 37px;
+    height: 30px;
+}
+
+.vertical-bar {
+    width: 0.25rem;
+    height: 3rem;
+}
+
+.icon-flag {
+    width: 40px;
+    height: 30px;
+}
+
+.side-panel-font {
+    font-size: 1.2rem;
+}
+
+#main-content-area {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.expense-users-box {
+    // min-height: 29rem;
+    max-height: 23rem;
+    overflow-y: auto;
+}
+
+.user-font {
+    font-size: 1.25rem;
+}

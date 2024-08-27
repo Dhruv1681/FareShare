@@ -1,0 +1,1419 @@
+openapi: 3.1.0
+info:
+  title: FairShare API - OpenAPI 3.1
+  version: '1.0'
+  description: |-
+    Welcome to the FairShare API documentation, offering seamless management of expenses, balances, and financial transactions. FairShare provides versatile splitting options enabling users to distribute expenses with ease.
+
+    - **Equal Split:** Equally divide expenses among participants.
+    - **Un-equal Split:** Distribute expenses unequally based on user-defined criteria.
+    - **Percentage Split:** Allocate expenses with precision using specified percentage shares.
+    - **Share-based Split:** Streamline cost distribution with predefined share values.
+    - **Itemized Expenses:** Break down expenses into individual items, with the added option to calculate taxes based on individual spending. Users retain the flexibility to override default tax calculations if necessary.
+    - **Reimbursement:** Facilitate easy settlement of shared expenses, ensuring each participant receives their fair share.
+
+    ## Additional Features:
+
+    - **Cash Payment Recording:** Effortlessly record cash transactions, seamlessly integrating them into your expense tracking.
+    - **Expense Analytics:** Gain valuable insights into your spending patterns with detailed analytics related to expense data.
+    - **Attaching Files:** Enhance your transaction details by attaching bills, invoices, and relevant files.
+    - **Send Reminders to Users:** Streamline payment processes by sending reminders to users, ensuring timely settlements.
+
+    Explore the full capabilities of the FairShare API to simplify your financial tracking, enhance collaboration, and foster transparent expense management.
+
+    Useful links:
+    - [GitHub Repository](https://github.com/info-6150-fall-2023/final-project-splitcode)
+servers:
+  - url: 'http://localhost:3000'
+  - url: 'http://oracle-cloud:3000'
+tags:
+  - name: Authentication
+    description: Authetication to generate Bearer Tokens
+  - name: Expenses
+    description: Expenses added in the application
+  - name: Groups
+    description: Groups present in the application
+  - name: Friends
+    description: Friends of the user
+  - name: Account
+    description: User Account related settings
+  - name: Analytics
+    description: Analytics on the spending trends
+  - name: Files
+    description: Retrieve files from server
+  - name: Users
+    description: Users of the application
+  - name: Activity
+    description: Activity of the user
+  - name: Admin
+    description: Adming related APIs
+paths:
+  /admin:
+    post:
+      tags:
+        - Admin
+      summary: Perform Admin related tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              recalculateLedgersExample:
+                value:
+                  secretKey: kkty
+                  action: recalculate-ledgers
+              sendEmailExample:
+                value:
+                  secretKey: kkty
+                  action: send-test-mail
+                  payload:
+                    emailId: dinesh@test.com
+                    subject: Test Message from Fair Share
+                    emailBody: This is a test message from Fair Share
+              Delete All Transactions Example:
+                value:
+                  secretKey: kkty
+                  action: delete-entities
+                  payload:
+                    entity: transactions
+              Delete All Activity Example:
+                value:
+                  secretKey: kkty
+                  action: delete-entities
+                  payload:
+                    entity: activities
+      responses:
+        '200':
+          description: Ledgers Recalculated succesfully
+          content:
+            application/json:
+              examples:
+                Ledgers Calculated Successfully:
+                  value:
+                    message: Ledgers recalculated successfully
+                Email Sent Successfully:
+                  value:
+                    message: Mail sent successfully
+        '401':
+          description: Ledgers Recalculated succesfully
+          content:
+            application/json:
+              examples:
+                Unauthorized Access:
+                  value:
+                    message: Unauthorized Access
+  /activity:
+    get:
+      tags:
+        - Activity
+      summary: Get all activities from the application with pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/paths/~1analytics~1api-access/get/parameters/2'
+        - name: pageSize
+          in: query
+          description: The number of items per page for server-side pagination.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+      responses:
+        '200':
+          description: Acitvity Pagination Successfull
+          content:
+            application/json:
+              examples:
+                Activity pagination Success:
+                  value:
+                    data:
+                      - id: 65795db5852fe9f5a4a26329
+                        entity: transaction
+                        entityId: 65795db5852fe9f5a4a26318
+                        textData:
+                          - text: Dhruv
+                            bold: true
+                          - text: added
+                            bold: false
+                          - text: d
+                            bold: true
+                          - text: in
+                            bold: false
+                          - bold: true
+                        text: You owe $20
+                        textColor: red
+                        username: Dinesh
+                        read: false
+                        createdOn: '2023-12-13T07:31:01.490Z'
+                        updatedOn: null
+                        createdBy: null
+                        updatedBy: null
+                        deleted: false
+                    meta:
+                      page: 1
+                      pageSize: 2
+                      count: 1
+                      totalPages: 1
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users (except current user)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/GetUsersSuccess'
+  /groups:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/CategoryQueryParam'
+      tags:
+        - Groups
+      summary: Get all Groups
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupSearchSuccess'
+    post:
+      tags:
+        - Groups
+      summary: Create a new Group
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupCreateRequest'
+            examples:
+              groupCreationExample:
+                value:
+                  name: A new FairShare Group
+                  image: 'https://example.com/path/to/image.png'
+                  users:
+                    user1:
+                      name: John
+                      email: john@gmail.com
+                    user2:
+                      name: Richard
+                      email: richard@gmail.com
+                  grouptype: Home
+                  simplifiedDebt: true
+      responses:
+        '201':
+          $ref: '#/components/responses/GroupCreateSuccess'
+  '/groups/{groupId}':
+    get:
+      tags:
+        - Groups
+      summary: Search a Group By Group ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/GroupIdQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupGetSuccess'
+        '404':
+          $ref: '#/components/responses/GroupNotFound'
+    put:
+      tags:
+        - Groups
+      summary: Update a group
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/GroupIdQueryParam'
+      requestBody:
+        required: true
+        content:
+          application/json: null
+          schema:
+            $ref: '#/components/schemas/GroupUpdateRequest'
+          examples:
+            groupFetchingExample:
+              value:
+                name: 6C Turquoise Way - New Name
+                image: 'https://newimage.com/path/to/newimage.png'
+                users:
+                  user1:
+                    name: John
+                grouptype: Home
+                simplifiedDebt: false
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupUpdateSuccess'
+  /expenses:
+    get:
+      tags:
+        - Expenses
+      summary: Get expenses related data with pagination and filter (if provided)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/paths/~1analytics~1api-access/get/parameters/2'
+        - $ref: '#/paths/~1activity/get/parameters/1'
+        - $ref: '#/components/parameters/CategoryQueryParam'
+        - $ref: '#/components/parameters/FromDateQueryParam'
+        - $ref: '#/components/parameters/ToDateQueryParam'
+        - $ref: '#/components/parameters/GroupIdQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExpensesGetAllSuccess'
+    post:
+      tags:
+        - Expenses
+      summary: Add an expense
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              Split Equally:
+                value:
+                  description: d
+                  amount: 20
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: ''
+                  paidBy: Tanmay
+                  split:
+                    type: equal
+                    payload:
+                      - Dinesh
+                      - Dhruv
+              Split Unequally:
+                value:
+                  description: d
+                  amount: 200.1
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: ''
+                  paidBy: Dinesh
+                  split:
+                    type: unequal
+                    payload:
+                      Dinesh: 50.1
+                      Tanmay: 75
+                      Dhruv: 75
+                      Khushank: 0
+              Split by shares:
+                value:
+                  description: d
+                  amount: 80
+                  date: '2023-02-01'
+                  groupId: 657805edf341bf89269d36f7
+                  category: Games
+                  paidBy: Tanmay
+                  split:
+                    type: shares
+                    payload:
+                      Dhruv: 1
+                      Dinesh: 1
+              Split by percentage:
+                value:
+                  description: d
+                  amount: 200.1
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: ''
+                  paidBy: Dinesh
+                  split:
+                    type: percentage
+                    payload:
+                      Dinesh: 50.1
+                      Tanmay: 49
+                      Dhruv: 0.5
+                      Khushank: 0.4
+              Split by reimbursement:
+                value:
+                  description: d
+                  amount: 20
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: ''
+                  paidBy: Tanmay
+                  split:
+                    type: reimburse
+                    payload:
+                      - Dinesh
+                      - Dhruv
+              Split by settlement:
+                value:
+                  description: d
+                  amount: 10
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: 657805edf341bf89269d36f7
+                  paidBy: Tanmay
+                  split:
+                    type: settlement
+                    payload: Dhruv
+              Split itemized expenses:
+                value:
+                  description: d
+                  amount: 200.1
+                  date: '2023-02-01'
+                  category: Games
+                  groupId: ''
+                  paidBy: Dinesh
+                  split:
+                    type: itemized
+                    payload:
+                      items:
+                        - description: Gas
+                          amount: 50
+                          users:
+                            Tanmay: 12.5
+                            Dinesh: 12.5
+                            Khushank: 12.5
+                            Dhruv: 12.5
+                        - description: Food
+                          amount: 120
+                          users:
+                            Khushank: 30
+                            Tanmay: 30
+                            Dhruv: 60
+                      tax:
+                        amount: 6
+                        users:
+                          Dinesh: 3
+                          Tanmay: 2.99
+                          Dhruv: 0.01
+                      tip:
+                        amount: 15
+                        users:
+                          Dinesh: 15
+      responses:
+        '200':
+          description: Successful response for one expense data
+          content:
+            application/json:
+              example:
+                expenseId: 1
+                description: Dinner with friends
+                amount: 50
+                type: equal
+                personalShare: 35
+                category: Food
+                date: '2023-01-15'
+  /auth:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+            examples:
+              userRegistrationExample:
+                value:
+                  username: john_doe
+                  firstName: John
+                  lastName: Doe
+                  email: john.doe@example.com
+                  nickname: johnd
+      responses:
+        '201':
+          $ref: '#/components/responses/UserRegistrationSuccess'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '409':
+          $ref: '#/components/responses/UserAlreadyExists'
+        '429':
+          $ref: '#/components/responses/TooManyOTPs'
+    put:
+      tags:
+        - Authentication
+      summary: Login a user using OTP sent to registered email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+            examples:
+              userLoginExample:
+                value:
+                  email: john.doe@example.com
+                  otp: '123456'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserLoginSuccess'
+        '400':
+          $ref: '#/components/responses/InvalidOTP'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+        '429':
+          $ref: '#/components/responses/TooFastOTP'
+    delete:
+      tags:
+        - Authentication
+      summary: Logout user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/LogoutSuccess'
+        '401':
+          $ref: '#/components/responses/LogoutUnauthorized'
+  /auth/otp:
+    post:
+      tags:
+        - Authentication
+      summary: Send OTP to registered user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+            examples:
+              sendOtpExample:
+                value:
+                  email: john.doe@example.com
+      responses:
+        '200':
+          $ref: '#/components/responses/OtpSent'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+        '429':
+          $ref: '#/components/responses/TooManyOTPs'
+  /account:
+    get:
+      tags:
+        - Account
+      summary: Get user account information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountInfoSuccess'
+    patch:
+      tags:
+        - Account
+      summary: Update account information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              UpdateGroupInvitation:
+                value:
+                  receiveGroupInvitationNotification: true
+              UpdateFriendRequest:
+                value:
+                  receiveFriendRequestNotification: false
+              UpdateExpenseAdded:
+                value:
+                  receiveExpenseAddedNotification: true
+              UpdateExpenseEditedDeleted:
+                value:
+                  receiveExpenseEditedDeletedNotification: false
+              UpdateExpenseComment:
+                value:
+                  receiveExpenseCommentNotification: true
+              UpdateExpenseDue:
+                value:
+                  receiveExpenseDueNotification: false
+              UpdatePayment:
+                value:
+                  receivePaymentNotification: true
+              UpdateMonthlySummary:
+                value:
+                  receiveMonthlySummaryNotification: false
+              UpdateMajorUpdates:
+                value:
+                  receiveMajorUpdatesNotification: true
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountInfoSuccess'
+    delete:
+      tags:
+        - Account
+      summary: Delete user account
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountDeletionSuccess'
+        '404':
+          $ref: '#/components/responses/AccountNotFound'
+  /analytics/monthly-spending:
+    get:
+      tags:
+        - Analytics
+      summary: Get monthly spending trends
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FromDateQueryParam'
+        - $ref: '#/components/parameters/ToDateQueryParam'
+        - $ref: '#/components/parameters/CategoryQueryParam'
+        - $ref: '#/components/parameters/GroupIdQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MontlySpendingTrends'
+  /analytics/api-access:
+    get:
+      tags:
+        - Analytics
+      summary: Get analytics of API access by user
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FromDateQueryParam'
+        - $ref: '#/components/parameters/ToDateQueryParam'
+        - name: page
+          in: query
+          description: The page number for server-side pagination.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiAccessAnalyticsSuccess'
+  '/files/{filePath}':
+    get:
+      tags:
+        - Files
+      summary: Get files from the server
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FilepathPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/FileDownloadSuccess'
+        '404':
+          $ref: '#/components/responses/FileNotFound'
+  /friends:
+    get:
+      tags:
+        - Friends
+      summary: Get all friends of the user
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SearchQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/FriendsListSuccess'
+    post:
+      tags:
+        - Friends
+      summary: Add a new friend by using username
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              username:
+                type: string
+            examples:
+              userFriendAddExample:
+                value:
+                  username: username
+      responses:
+        '201':
+          $ref: '#/components/responses/FriendsAddSuccess'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /expenses/uploadCsv:
+    post:
+      tags:
+        - Expenses
+      summary: Add expenses in bulk using CSV file
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            examples:
+              AddExpense:
+                value:
+                  file: csv_file
+      responses:
+        '200':
+          description: JSON formatted CSV data.
+          content:
+            application/json:
+              example:
+                data:
+                  - Date: 9/19/23
+                    Description: Target
+                    Category: General
+                    Cost: '100'
+                    Currency: USD
+                    A: '0'
+                    B: '-100'
+                    C: '100'
+                  - Date: 9/26/23
+                    Description: Display
+                    Category: General
+                    Cost: '100'
+                    Currency: USD
+                    A: '0'
+                    B: '-100'
+                    C: '100'
+        '400':
+          description: Invalid CSV file.
+          content:
+            application/json:
+              example:
+                error: Please upload an CSV file..
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                error: Internal server error.
+  '/expenses/{expenseId}':
+    get:
+      tags:
+        - Expenses
+      summary: Get all information for a particular expense
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExpenseIdPathParam'
+      responses: null
+    delete:
+      tags:
+        - Expenses
+      summary: Deleted the particular expense
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExpenseIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExpensesUpdateSuccess'
+        '404':
+          $ref: '#/components/responses/ExpenseDeleteNotFound'
+    put:
+      tags:
+        - Expenses
+      summary: Update all fields of expense
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExpenseIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseRequest'
+            examples:
+              UpdateEntireExpense:
+                value:
+                  description: Updated description
+                  amount: 60
+                  personalShare: 40
+                  type: equal
+                  category: Entertainment
+                  date: '2023-02-01'
+                  groupId: abcd
+      responses:
+        '200':
+          $ref: '#/components/responses/ExpensesUpdateSuccess'
+        '404':
+          $ref: '#/components/responses/ExpenseDeleteNotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    GroupIdQueryParam:
+      name: groupId
+      in: query
+      description: The ID of the group for which to retrieve informaiton.
+      required: false
+      schema:
+        type: string
+    SearchQueryParam:
+      name: search
+      in: query
+      description: The search term.
+      required: false
+      schema:
+        type: string
+    FromDateQueryParam:
+      name: fromDate
+      in: query
+      description: Start date (YYYY-MM-DD).
+      required: false
+      schema:
+        type: string
+        format: date
+    ToDateQueryParam:
+      name: toDate
+      in: query
+      description: End date (YYYY-MM-DD).
+      required: false
+      schema:
+        type: string
+        format: date
+    CategoryQueryParam:
+      name: category
+      in: query
+      description: category name.
+      required: false
+      schema:
+        type: string
+    FilepathPathParam:
+      name: filePath
+      in: path
+      description: the file to retrieve from the server
+      required: true
+      schema:
+        type: string
+    ExpenseIdPathParam:
+      name: expenseId
+      in: path
+      description: The identifier of the expense
+      required: true
+      schema:
+        type: string
+  schemas:
+    ExpenseRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+        split:
+          type: string
+          enum:
+            - equal
+            - unequal
+            - shares
+            - percentage
+            - itemized
+        personalShare:
+          type: number
+        category:
+          type: string
+        groupId:
+          type: string
+        date:
+          type: string
+          format: date
+    GroupCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+        users:
+          type: object
+        grouptype:
+          type: string
+        settings:
+          type: string
+      required:
+        - name
+        - users
+        - grouptype
+        - settings
+    GroupFetchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    GroupUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    GroupDeleteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    UserRegistrationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        nickname:
+          type: string
+      required:
+        - email
+        - username
+    SendOtpRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        otp:
+          type: string
+      required:
+        - email
+        - otp
+  responses:
+    UserRegistrationSuccess:
+      description: User successfully registered. OTP sent to the provided email.
+      content:
+        application/json:
+          examples:
+            userRegistrationSuccessExample:
+              value:
+                message: User successfully registered. OTP sent to the provided email.
+    InvalidRequest:
+      description: Invalid request. Check email format or missing required fields.
+      content:
+        application/json:
+          examples:
+            invalidRequestExample:
+              value:
+                error: Invalid request. Check email format or missing required fields.
+    UserAlreadyExists:
+      description: User with the provided email or username already exists.
+      content:
+        application/json:
+          examples:
+            userAlreadyExistsExample:
+              value:
+                error: User with the provided email or username already exists.
+    TooManyOTPs:
+      description: Too many OTPs generated. Please try again later.
+      content:
+        application/json:
+          examples:
+            tooManyOtpsExample:
+              value:
+                error: Too many OTPs generated. Please try again later.
+    UserLoginSuccess:
+      description: User successfully logged in. Bearer auth token sent in response.
+      content:
+        application/json:
+          examples:
+            userLoginSuccessExample:
+              value:
+                authToken: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    InvalidOTP:
+      description: Invalid OTP. Please check the OTP and try again.
+      content:
+        application/json:
+          examples:
+            invalidOtpExample:
+              value:
+                error: Invalid OTP. Please check the OTP and try again.
+    UserNotFound:
+      description: User not found. Please check the provided email and try again.
+      content:
+        application/json:
+          examples:
+            userNotFoundExample:
+              value:
+                error: User not found. Please check the provided email and try again.
+    OtpSent:
+      description: OTP successfully sent to the user's email
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: OTP Sent successfully
+    TooFastOTP:
+      description: OTP sent too fast. Please wait before requesting another OTP.
+      content:
+        application/json:
+          examples:
+            tooFastOtpExample:
+              value:
+                error: An error occurred while processing your request. Please try again.
+    LogoutSuccess:
+      description: User logged out successfully
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: User logged out successfully
+    LogoutUnauthorized:
+      description: Unauthorized - Bearer token not provided
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Authentication Failed
+    AccountInfoSuccess:
+      description: User account information retrieved successfully
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                receiveGroupInvitationNotification: true
+                receiveFriendRequestNotification: false
+                receiveExpenseAddedNotification: true
+                receiveExpenseEditedDeletedNotification: false
+                receiveExpenseCommentNotification: true
+                receiveExpenseDueNotification: false
+                receivePaymentNotification: true
+                receiveMonthlySummaryNotification: false
+                receiveMajorUpdatesNotification: true
+    FriendsAddSuccess:
+      description: Add friends success
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                id: 6577a09f1bc3d64b3fcb9d19
+                firstUser:
+                  id: 6577512aa4d86945ac8af578
+                  username: Dinesh
+                  email: shekhawat.dinesh@gmail.com
+                  nickname: Dinesh
+                  updatedOn: null
+                  createdOn: '2023-12-11T18:12:58.219Z'
+                secondUser:
+                  id: 65776f325aa0f0e7c4d7f8de
+                  username: Tanmay
+                  email: tanmay@test.com
+                  nickname: Tanmay
+                  updatedOn: null
+                  createdOn: '2023-12-11T20:21:06.625Z'
+                updatedOn: null
+                createdBy:
+                  id: 6577512aa4d86945ac8af578
+                  username: Dinesh
+                  email: shekhawat.dinesh@gmail.com
+                  nickname: Dinesh
+                  updatedOn: null
+                  createdOn: '2023-12-11T18:12:58.219Z'
+                updatedBy: null
+                createdOn: '2023-12-11T23:51:59.612Z'
+    FriendsDeleteSuccess:
+      description: Delete friends success
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Friend deleted succesfully
+    FriendNotFound:
+      description: Friend not found
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Friend not found.
+    AccountDeletionSuccess:
+      description: User account deleted successfully
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: User account deleted successfully
+    AccountNotFound:
+      description: User account information not found
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: User account not found.
+    MontlySpendingTrends:
+      description: Monthly spending trends
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                - year: 2023
+                  months:
+                    - month: January
+                      totalAmountPaid: 500
+                      type: equal
+                      personalShare: 250
+                      categories:
+                        groceries:
+                          totalSpending: 150
+                          personalShare: 75
+                        entertainment:
+                          totalSpending: 150
+                          personalShare: 75
+                    - month: February
+                      totalAmountPaid: 500
+                      personalShare: 250
+                      categories:
+                        groceries:
+                          totalSpending: 150
+                          personalShare: 75
+                        entertainment:
+                          totalSpending: 150
+                          personalShare: 75
+                - year: 2024
+                  months:
+                    - month: January
+                      totalAmountPaid: 500
+                      personalShare: 250
+                      categories:
+                        groceries:
+                          totalSpending: 150
+                          personalShare: 75
+                        entertainment:
+                          totalSpending: 150
+                          personalShare: 75
+                    - month: February
+                      totalAmountPaid: 500
+                      personalShare: 250
+                      categories:
+                        groceries:
+                          totalSpending: 150
+                          personalShare: 75
+                        entertainment:
+                          totalSpending: 150
+                          personalShare: 75
+    ApiAccessAnalyticsSuccess:
+      description: Successful response with API access analytics
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                data:
+                  - apiEndpoint: /expenses
+                    httpMethod: GET
+                    responseCode: 200
+                    accessCount: 5
+                    lastAccessDate: '2023-01-15T10:30:00Z'
+                    millisecondsTaken: 150
+                  - userId: 123
+                    apiEndpoint: /payments
+                    httpMethod: POST
+                    responseCode: 201
+                    accessCount: 3
+                    lastAccessDate: '2023-01-16T12:45:00Z'
+                    millisecondsTaken: 200
+                meta:
+                  currentPage: 1
+                  pageSize: 10
+                  nextPage: 2
+    FileDownloadSuccess:
+      description: Successful response with file content
+      headers:
+        Content-Disposition:
+          description: Indicates that the response should be treated as an attachment and downloaded.
+          schema:
+            type: string
+            default: attachment
+      content:
+        application/octet-stream:
+          examples:
+            fileDownload:
+              summary: Example file download response
+              externalValue: url_to_example_file
+    FileNotFound:
+      description: File not found. Also if user tries to access a file to which access is denied it will have same response.
+      content:
+        application/json:
+          example:
+            message: File not found
+    GroupNotFound:
+      description: Not Found
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Group Not Found
+    GroupSearchSuccess:
+      description: Successful search
+      content:
+        application/json:
+          example:
+            - id: grp-001
+              name: A FairShare Group
+              members:
+                - id: mem-001
+                  name: John
+                - id: mem-002
+                  name: Richard
+            - id: grp-002
+              name: A New FairShare Group
+              members:
+                - id: mem-001
+                  name: John
+                - id: mem-002
+                  name: Richard
+    GroupGetSuccess:
+      description: Successful get for a group
+      content:
+        application/json:
+          example:
+            response:
+              id: grp-001
+              name: A FairShare Group
+              members:
+                - id: mem-001
+                  name: John
+                - id: mem-002
+                  name: Richard
+    GroupCreateSuccess:
+      description: Resource created successfully
+      content:
+        application/json:
+          example:
+            group1:
+              id: grp-001
+              name: A FairShare Group
+              members:
+                - id: mem-001
+                  name: John
+                - id: mem-002
+                  name: Richard
+    GroupUpdateSuccess:
+      description: Group updated succesfully
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Group updated successfully
+    GetActivitiesSuccess:
+      description: Successful response with activities data
+      content:
+        application/json:
+          example:
+            - date: '2023-12-15, 11:48PM'
+              entityDeleted: true
+              entityId: '123'
+              greenText: You are owed $5
+              id: '1'
+              redText: You owe $10
+              textData:
+                - bold: true
+                  text: Tanmay
+                - bold: false
+                  text: updated
+                - bold: true
+                  text: Patel Roti
+                - bold: true
+                  text: in
+                - bold: true
+                  text: NEU Group
+              type: expense
+            - date: '2023-12-16, 02:30PM'
+              entityDeleted: false
+              entityId: '456'
+              greenText: You are owed $0
+              id: '2'
+              redText: You owe $25
+              textData:
+                - bold: true
+                  text: Dinesh
+                - bold: false
+                  text: added a new expense
+                - bold: true
+                  text: Dinner with Friends
+                - bold: true
+                  text: in
+                - bold: true
+                  text: Personal
+              type: settlement
+            - date: '2023-12-15, 11:48PM'
+              entityDeleted: true
+              entityId: '123'
+              greenText: You are owed $5
+              id: '1'
+              redText: You owe $10
+              textData:
+                - bold: true
+                  text: Tanmay
+                - bold: false
+                  text: updated
+                - bold: true
+                  text: Patel Roti
+                - bold: true
+                  text: in
+                - bold: true
+                  text: NEU Group
+              type: expense
+    GetUsersSuccess:
+      description: Successful response with users data
+      content:
+        application/json:
+          example:
+            - id: 65776f565aa0f0e7c4d7f8e4
+              username: Dhruv
+              email: dhruv@test.com
+              nickname: Dhruv
+              updatedOn: null
+              createdOn: '2023-12-11T20:21:42.266Z'
+            - id: 6577512aa4d86945ac8af578
+              username: Dinesh
+              email: shekhawat.dinesh@gmail.com
+              nickname: Dinesh
+              updatedOn: null
+              createdOn: '2023-12-11T18:12:58.219Z'
+            - id: 65776f325aa0f0e7c4d7f8de
+              username: Tanmay
+              email: tanmay@test.com
+              nickname: Tanmay
+              updatedOn: null
+              createdOn: '2023-12-11T20:21:06.625Z'
+    FriendsListSuccess:
+      description: Friends list retrieved successfully
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                - id: 65776f325aa0f0e7c4d7f8de
+                  username: Tanmay
+                  email: tanmay@test.com
+                  nickname: Tanmay
+                  updatedOn: null
+                  createdOn: '2023-12-11T20:21:06.625Z'
+                - id: 6577512aa4d86945ac8af578
+                  username: Dinesh
+                  email: shekhawat.dinesh@gmail.com
+                  nickname: Dinesh
+                  updatedOn: null
+                  createdOn: '2023-12-11T18:12:58.219Z'
+    ExpensesGetAllSuccess:
+      description: Successful response with expenses data
+      content:
+        application/json:
+          example:
+            data:
+              expenses:
+                - expenseId: 1
+                  description: Dinner with friends
+                  amount: 50
+                  type: equal
+                  personalShare: 35
+                  category: Food
+                  date: '2023-01-15'
+                - expenseId: 2
+                  description: Movie night
+                  amount: 20
+                  personalShare: 0
+                  category: Entertainment
+                  date: '2023-01-20'
+            meta:
+              currentPage: 1
+              pageSize: 10
+              nextPage: 2
+    ExpensesUpdateSuccess:
+      description: Successful response expense data updated
+      content:
+        application/json:
+          example:
+            data:
+              expenseId: 1
+              description: Dinner with friends
+              amount: 50
+              type: equal
+              personalShare: 35
+              category: Food
+              date: '2023-01-15'
+            message: Expense Updated successfully
+    ExpenseDeleteSuccess:
+      description: Expense delete successfull
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Expense has been deleted successfully.
+    ExpenseDeleteNotFound:
+      description: Expense delete fail because of invalid identifier
+      content:
+        application/json:
+          examples:
+            responses:
+              value:
+                message: Expense not found.
+    SplitEquallySuccess:
+      description: Expense split equally successfully.
+      content:
+        application/json:
+          example:
+            status: success
+            message: Expense split equally.
+    SplitExactAmountSuccess:
+      description: Expense split by exact amount successfully.
+      content:
+        application/json:
+          example:
+            status: success
+            message: Expense split by exact amount.
+    SplitByPercentageSuccess:
+      description: Expense split by percentage successfully.
+      content:
+        application/json:
+          example:
+            status: success
+            message: Expense split by percentage.
+    SplitByShareSuccess:
+      description: Expense split by share successfully.
+      content:
+        application/json:
+          example:
+            status: success
+            message: Expense split by share.
+    SplitByAdjustmentSuccess:
+      description: Expense split by adjustment successfully.
+      content:
+        application/json:
+          example:
+            status: success
+            message: Expense split by adjustment.
+    ErrorResponse:
+      description: An error occurred during the Splitwise operation.
+      content:
+        application/json:
+          example:
+            status: error
+            message: An error occurred. Please try again.

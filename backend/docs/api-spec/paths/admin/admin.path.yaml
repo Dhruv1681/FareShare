@@ -1,0 +1,11 @@
+post:
+  tags:
+    - Admin
+  summary: Perform Admin related tasks
+  requestBody:
+    $ref: '../../components/requests/admin/admin.request.yaml#/AdminRequestBody'
+  responses:
+    '200':
+      $ref: '../../components/responses/admin/admin.response.yaml#/AdminLedgerSuccess'
+    '401':
+      $ref: '../../components/responses/admin/admin.response.yaml#/AdminLedgerFail'

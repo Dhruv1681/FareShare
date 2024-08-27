@@ -1,0 +1,131 @@
+// This page will use all functions, mixins, etc to construct all classes
+
+// Map function provided by SCSS to store key value pairs
+@use "sass:map";
+
+// border, background color & color related classes
+@each $color, $hex-code in $colors {
+    .border-#{$color} {
+        @include property-generic(border, 2px $hex-code solid);
+    }
+
+    .hover-#{$color}:hover {
+        @include property-generic(background-color, $hex-code);
+    }
+
+    .text-hover-#{$color}:hover {
+        @include property-generic(color, $hex-code);
+    }
+
+    .bg-#{$color} {
+        @include property-generic(background-color, $hex-code);
+    }
+
+    .color-#{$color} {
+        @include property-generic(color, $hex-code);
+    }
+
+    .form-#{$color}-focus:focus {
+        @include property-generic(border-color, $hex-code);
+        // @include property-generic(color, $hex-code);
+        @include property-generic(box-shadow, none);
+    }
+}
+
+.text-decoration-none:hover {
+    @include property-generic(text-decoration, none);
+}
+
+.z-below-zero {
+    @include property-generic(z-index, -1);
+}
+
+// Icon related classes
+@each $icon-name, $icon-file in $icons {
+    .icon-#{$icon-name} {
+        @include icon($icon-file);    
+    }
+
+    .icon-#{$icon-name}-hover:hover {
+        @include icon($icon-file);    
+    }
+}
+
+// Image related classes
+@each $image-name, $image-file in $images {
+    @if $image-name == 'logo-footer' {
+        .img-#{$image-name} {
+            @include img($image-file, $background-size: contain);
+        }
+    } @else {
+        .img-#{$image-name} {
+            @include img($image-file);
+        }
+    }
+    
+}
+
+// CSS class for Bold font
+.font-bold {
+    font-weight: bold;
+}
+
+// CSS classes to increase font-size
+@each $increase in $font-increases {
+    .font-#{$increase}-x {
+        font-size: $increase * 100%;
+    }
+}
+
+// Text Align classes
+@each $class, $value in $text-align-targets {
+    .text-align-#{$class} {
+        text-align: $value;
+    }
+}
+
+// Height vh classes
+@each $height-vh-target in $height-vh-targets {
+    .min-h-#{$height-vh-target}-vh {
+        @include property-generic(min-height, #{$height-vh-target}vh);
+    }
+
+    .max-h-#{$height-vh-target}-vh {
+        @include property-generic(min-height, #{$height-vh-target}vh);
+    }
+
+    .h-#{$height-vh-target}-vh {
+        @include property-generic(height, #{$height-vh-target}vh);
+    }
+}
+
+// Hoverable class
+.hoverable {
+    @include property-generic(cursor, pointer);
+}
+
+// Padding for buttons
+.button-padding {
+    @include padding(top, 1em);
+    @include padding(bottom, 1em);
+    @include padding(left, 1em);
+    @include padding(right, 1em);
+}
+
+// Dim image on hover
+.hover-dim:hover {
+    opacity: $dim-opacity;
+}
+
+.border-bottom-grey {
+    border-bottom: 2px solid #{map.get($colors, 'grey')};
+}
+
+.underline-hover {
+    text-decoration: underline;
+}
+
+.border-top-right-none {
+    @include property-generic(border-top-right-radius, 0);
+}
+

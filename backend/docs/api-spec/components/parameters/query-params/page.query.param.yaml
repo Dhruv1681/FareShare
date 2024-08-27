@@ -1,0 +1,9 @@
+PageQueryParam:
+  name: page
+  in: query
+  description: The page number for server-side pagination.
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    default: 1

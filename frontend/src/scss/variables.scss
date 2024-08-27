@@ -1,0 +1,63 @@
+// SCSS file to store variables
+
+$font-family: Verdana, sans-serif;
+
+$font-increases: range(2, 4);
+
+$border-radius: 1em;
+$grid-border-width: 0.4em;
+$dim-opacity: 0.5;
+
+$colors: (
+    'white': #FFF, 
+    'green': #32C29F, 
+    'light-green': #CDEAE1, 
+    'dark-grey': #33333382,
+    'black': #000, 
+    'grey': #DEDEDE, 
+    'light-grey': #FAFBFC,
+    'yellow': #FDF5CC,
+    'pink': #FDA4A1,
+    'red': #FF0000,
+    'dark-green': #112211
+);
+
+$icons-path: '../assets/icons';
+
+$icons: (
+    social-media-facebook: 'social-media-facebook.svg',
+    fairshare-topnav: 'fairshare-topnav.png',
+    dashboard: 'dashboard-icon.png',
+    dashboard-green: 'dashboard-icon-green.png',
+    expenses: 'expenses-icon.png',
+    expenses-green: 'expenses-icon-green.png',
+    groups: 'groups-icon.png',
+    groups-green: 'groups-icon-green.png',
+    friends: 'friends-icon.png',
+    friends-green: 'friends-icon-green.png',
+    activity: 'activity-icon.png',
+    activity-green: 'activity-icon-green.png',
+    settings: 'settings-icon.png',
+    settings-green: 'settings-icon-green.png',
+
+    flag-us: 'flag-icons/flag-us.svg',
+    flag-fr: 'flag-icons/flag-fr.svg',
+    flag-sp: 'flag-icons/flag-sp.svg',
+    flag-de: 'flag-icons/flag-de.svg',
+);
+
+$img-path: '../assets/images';
+
+$images: (
+    user-avatar-1: 'user-avatar-1.png'
+);
+
+$text-align-targets: (
+    'center': center,
+    'right': right,
+    'left': left
+);
+
+$height-vh-targets: range(1, 100);
+
+$border-thickness: 0.3em;

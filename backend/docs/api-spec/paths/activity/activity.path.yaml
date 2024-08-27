@@ -1,0 +1,12 @@
+get:
+    tags:
+      - Activity
+    summary: Get all activities from the application with pagination
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../../components/parameters/query-params/page.query.param.yaml#/PageQueryParam'
+      - $ref: '../../components/parameters/query-params/page-size.query.param.yaml#/PageSizeQueryParam'
+    responses:
+      '200':
+        $ref: '../../components/responses/activity/activity.response.yaml#/ActivityPaginationSuccessResponse'

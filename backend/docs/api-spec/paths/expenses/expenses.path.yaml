@@ -1,0 +1,28 @@
+get:
+  tags:
+      - Expenses
+  summary: Get expenses related data with pagination and filter (if provided)
+  security:
+  - bearerAuth: []
+  parameters:
+      - $ref: '../../components/parameters/query-params/page.query.param.yaml#/PageQueryParam'
+      - $ref: '../../components/parameters/query-params/page-size.query.param.yaml#/PageSizeQueryParam'
+      - $ref: '../../components/components.yaml#/parameters/CategoryQueryParam'
+      - $ref: '../../components/components.yaml#/parameters/FromDateQueryParam'
+      - $ref: '../../components/components.yaml#/parameters/ToDateQueryParam'
+      - $ref: '../../components/components.yaml#/parameters/GroupIdQueryParam'
+  responses:
+      '200':
+          $ref: '../../components/components.yaml#/responses/ExpensesGetAllSuccess'
+
+post:
+  tags:
+      - Expenses
+  summary: Add an expense
+  security:
+  - bearerAuth: []
+  requestBody:
+    $ref: '../../components/requests/expenses/expenses.request.yaml#/ExpenseRequestBody'
+  responses:
+    '200':
+      $ref: '../../components/responses/expenses/expenses.response.yaml#/ExpensesGetSuccess'

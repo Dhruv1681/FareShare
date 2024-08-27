@@ -1,0 +1,445 @@
+/admin:
+  $ref: './admin/admin.path.yaml'
+
+/activity:
+  $ref: './activity/activity.path.yaml'
+
+/users:
+  $ref: './users/users.path.yaml'
+
+/groups:
+  $ref: './groups/groups.path.yaml'
+
+/groups/{groupId}:
+  $ref: './groups/groups-id.path.yaml'
+
+/expenses:
+  $ref: './expenses/expenses.path.yaml'
+
+/auth:
+  post:
+    tags:
+      - Authentication
+    summary: Register a new user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/components.yaml#/schemas/UserRegistrationRequest'
+          examples:
+            userRegistrationExample:
+              value:
+                username: "john_doe"
+                firstName: "John"
+                lastName: "Doe"
+                email: "john.doe@example.com"
+                nickname: "johnd"
+    responses:
+      '201':
+        $ref: '../components/components.yaml#/responses/UserRegistrationSuccess'
+      '400':
+        $ref: '../components/components.yaml#/responses/InvalidRequest'
+      '409':
+        $ref: '../components/components.yaml#/responses/UserAlreadyExists'
+      '429':
+        $ref: '../components/components.yaml#/responses/TooManyOTPs'
+  put:
+    tags:
+      - Authentication
+    summary: Login a user using OTP sent to registered email
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/components.yaml#/schemas/UserLoginRequest'
+          examples:
+            userLoginExample:
+              value:
+                email: "john.doe@example.com"
+                otp: "123456"
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/UserLoginSuccess'
+      '400':
+        $ref: '../components/components.yaml#/responses/InvalidOTP'
+      '404':
+        $ref: '../components/components.yaml#/responses/UserNotFound'
+      '429':
+        $ref: '../components/components.yaml#/responses/TooFastOTP'
+
+  delete:
+    tags:
+      - Authentication
+    summary: Logout user
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+          $ref: '../components/components.yaml#/responses/LogoutSuccess'
+      '401':
+          $ref: '../components/components.yaml#/responses/LogoutUnauthorized'
+
+/auth/otp:
+  post:
+      tags:
+      - Authentication
+      summary: Send OTP to registered user's email
+      requestBody:
+          required: true
+          content:
+              application/json:
+                  schema:
+                      $ref: '../components/components.yaml#/schemas/SendOtpRequest'
+                  examples:
+                      sendOtpExample:
+                          value:
+                              email: "john.doe@example.com"
+      responses:
+          '200':
+              $ref: '../components/components.yaml#/responses/OtpSent'
+          '404':
+              $ref: '../components/components.yaml#/responses/UserNotFound'
+          '429':
+              $ref: '../components/components.yaml#/responses/TooManyOTPs' 
+
+/account:
+  get:
+    tags:
+    - Account
+    summary: Get user account information
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/AccountInfoSuccess'
+
+  patch:
+    tags:
+    - Account
+    summary: Update account information
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:            
+          examples:
+            UpdateGroupInvitation:
+              value:
+                receiveGroupInvitationNotification: true
+            UpdateFriendRequest:
+              value:
+                receiveFriendRequestNotification: false
+            UpdateExpenseAdded:
+              value:
+                receiveExpenseAddedNotification: true
+            UpdateExpenseEditedDeleted:
+              value:
+                receiveExpenseEditedDeletedNotification: false
+            UpdateExpenseComment:
+              value:
+                receiveExpenseCommentNotification: true
+            UpdateExpenseDue:
+              value:
+                receiveExpenseDueNotification: false
+            UpdatePayment:
+              value:
+                receivePaymentNotification: true
+            UpdateMonthlySummary:
+              value:
+                receiveMonthlySummaryNotification: false
+            UpdateMajorUpdates:
+              value:
+                receiveMajorUpdatesNotification: true  
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/AccountInfoSuccess' 
+
+  delete:
+    tags:
+      - Account
+    summary: Delete user account
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/AccountDeletionSuccess'
+      '404':
+        $ref: '../components/components.yaml#/responses/AccountNotFound'
+/analytics/monthly-spending:
+  get:
+    tags:
+    - Analytics
+    summary: Get monthly spending trends
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../components/components.yaml#/parameters/FromDateQueryParam'
+      - $ref: '../components/components.yaml#/parameters/ToDateQueryParam'
+      - $ref: '../components/components.yaml#/parameters/CategoryQueryParam'
+      - $ref: '../components/components.yaml#/parameters/GroupIdQueryParam'
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/MontlySpendingTrends'
+/analytics/api-access:
+  get:
+    tags:
+      - Analytics
+    summary: Get analytics of API access by user
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../components/components.yaml#/parameters/FromDateQueryParam'
+      - $ref: '../components/components.yaml#/parameters/ToDateQueryParam'
+      - $ref: '../components/parameters/query-params/page.query.param.yaml#/PageQueryParam'  
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/ApiAccessAnalyticsSuccess' 
+  
+/files/{filePath}:
+  get:
+    tags:
+      - Files
+    summary: Get files from the server
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../components/components.yaml#/parameters/FilepathPathParam'
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/FileDownloadSuccess'
+      '404':
+        $ref: '../components/components.yaml#/responses/FileNotFound'
+
+/friends:
+  get:
+    tags:
+      - Friends
+    summary: Get all friends of the user
+    security:
+      - bearerAuth: []
+    parameters:
+      - $ref: '../components/components.yaml#/parameters/SearchQueryParam'
+    responses:
+      '200':
+        $ref: '../components/components.yaml#/responses/FriendsListSuccess'
+
+  post:
+    tags:
+      - Friends
+    summary: Add a new friend by using username
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            username:
+              type: string
+          examples:
+            userFriendAddExample:
+              value:
+                username: "username"
+    responses:
+      '201':
+        $ref: '../components/components.yaml#/responses/FriendsAddSuccess'
+      '400':
+        $ref: '../components/components.yaml#/responses/InvalidRequest'
+
+
+      
+
+/expenses/uploadCsv:
+      post:
+        tags:
+          - Expenses
+        summary: Add expenses in bulk using CSV file
+        security:
+          - bearerAuth: []
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  file:
+                    type: string
+                    format: binary
+              examples:
+                AddExpense:
+                  value:
+                    file: 'csv_file' 
+        responses:
+            '200':
+              description: JSON formatted CSV data.
+              content:
+                application/json:
+                  example:
+                    data: [
+                      {
+                        Date: '9/19/23',
+                        Description: 'Target',
+                        Category: 'General',
+                        Cost: '100',
+                        Currency: 'USD',
+                        A: '0',
+                        B: '-100',
+                        C: '100',
+                      },
+                      {
+                        Date: '9/26/23',
+                        Description: 'Display',
+                        Category: 'General',
+                        Cost: '100',
+                        Currency: 'USD',
+                        A: '0',
+                        B: '-100',
+                        C: '100',
+                      }
+                    ]
+            '400':
+              description: Invalid CSV file.
+              content:
+                application/json:
+                  example:
+                    error: Please upload an CSV file..
+            '500':  
+              description: Internal server error.
+              content:
+                application/json:
+                  example:
+                    error: Internal server error. 
+
+# /expenses/getCsv:
+#       post:
+#         tags:
+#           - Expenses
+#         summary: Download expenses in CSV format
+#         security:
+#           - bearerAuth: []
+#         requestBody:
+#           required: true
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   expenses:
+#                     type: array
+#                     items:
+#                       type: object
+#                       properties:
+#                         date:
+#                           type: string
+#                           format: date
+#                         description:
+#                           type: string
+#                         category:
+#                           type: string
+#                         amount:
+#                           type: number
+#                         personalShare:
+#                           type: number
+#                         type:
+#                           type: string
+#                         groupId:
+#                           type: string
+#                         otherPeopleShare:
+#                           type: array
+#                           items:
+#                             type: object
+#                             properties:
+#                               userId:
+#                                 type: string
+#                               share:
+#                                 type: number
+#         responses:
+#             '200':
+#               description: CSV String.
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: string
+#                     format: binary
+#                   example:
+#                     Date,Description,Category,Amount,Personal Share,Type,Group ID,Other People Share
+#                     2023-09-19,Target,General,100,0,equal,grp-001,
+#                     2023-09-26,Display,General,100,0,equal,grp-001,
+#             '400':
+#               description: Invalid request.
+#               content:
+#                 application/json:
+#                   example:
+#                     error: Invalid request.
+#             '500':  
+#               description: Internal server error.
+#               content:
+#                 application/json:
+#                   example:
+#                     error: Internal server error.
+
+
+
+/expenses/{expenseId}:
+      get:
+          tags:
+              - Expenses
+          summary: Get all information for a particular expense
+          security:
+          - bearerAuth: []
+          parameters:
+              - $ref: '../components/components.yaml#/parameters/ExpenseIdPathParam'
+          responses:
+              # '200':
+              #     $ref: '../components/components.yaml#/responses/ExpensesGetSuccess'
+      delete:
+          tags:
+              - Expenses
+          summary: Deleted the particular expense
+          security:
+          - bearerAuth: []
+          parameters:
+              - $ref: '../components/components.yaml#/parameters/ExpenseIdPathParam'
+          responses:
+              '200':
+                  $ref: '../components/components.yaml#/responses/ExpensesUpdateSuccess'
+              '404':
+                $ref: '../components/components.yaml#/responses/ExpenseDeleteNotFound'
+      put:
+        tags:
+          - Expenses
+        summary: Update all fields of expense
+        security:
+          - bearerAuth: []
+        parameters:
+            - $ref: '../components/components.yaml#/parameters/ExpenseIdPathParam'
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '../components/components.yaml#/schemas/ExpenseRequest'
+              examples:
+                UpdateEntireExpense:
+                  value:
+                    description: 'Updated description'
+                    amount: 60.00
+                    personalShare: 40.0
+                    type: 'equal'
+                    category: 'Entertainment'
+                    date: '2023-02-01'
+                    groupId: 'abcd'
+        responses:
+            '200':
+                $ref: '../components/components.yaml#/responses/ExpensesUpdateSuccess'
+            '404':
+              $ref: '../components/components.yaml#/responses/ExpenseDeleteNotFound'
+ 
+
+  
+  
+

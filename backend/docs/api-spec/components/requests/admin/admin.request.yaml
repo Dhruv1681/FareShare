@@ -1,0 +1,30 @@
+AdminRequestBody:
+  required: true
+  content:
+    application/json:
+      examples:
+        recalculateLedgersExample:
+          value:
+            secretKey: kkty
+            action: recalculate-ledgers
+        sendEmailExample:
+          value:
+            secretKey: kkty
+            action: send-test-mail
+            payload:
+              emailId: dinesh@test.com
+              subject: Test Message from Fair Share
+              emailBody: This is a test message from Fair Share
+        Delete All Transactions Example:
+          value:
+            secretKey: kkty
+            action: delete-entities
+            payload:
+              entity: transactions
+        Delete All Activity Example:
+          value:
+            secretKey: kkty
+            action: delete-entities
+            payload:
+              entity: activities
+              

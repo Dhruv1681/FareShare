@@ -1,0 +1,9 @@
+PageSizeQueryParam:
+    name: pageSize
+    in: query
+    description: The number of items per page for server-side pagination.
+    required: false
+    schema:
+      type: integer
+      minimum: 1
+      default: 10

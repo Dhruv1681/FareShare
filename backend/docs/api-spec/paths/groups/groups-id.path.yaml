@@ -1,0 +1,41 @@
+get:
+  tags:
+    - Groups
+  summary: Search a Group By Group ID
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../components/parameters/path-params/group-id.path.param.yaml#/GroupIdQueryParam'
+  responses:
+    '200':
+        $ref: '../../components/components.yaml#/responses/GroupGetSuccess'
+    '404':
+        $ref: '../../components/components.yaml#/responses/GroupNotFound'
+
+put:
+  tags:
+    - Groups
+  summary: Update a group
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../components/parameters/path-params/group-id.path.param.yaml#/GroupIdQueryParam'
+  requestBody:
+    required: true
+    content: 
+        application/json: 
+        schema: 
+          $ref: "../../components/components.yaml#/schemas/GroupUpdateRequest"
+        examples:
+          groupFetchingExample:
+            value:
+              name: "6C Turquoise Way - New Name"
+              image: 'https://newimage.com/path/to/newimage.png'
+              users:
+                user1:
+                  name: 'John'
+              grouptype: "Home"
+              simplifiedDebt: false
+  responses:
+    '200':
+        $ref: '../../components/components.yaml#/responses/GroupUpdateSuccess'

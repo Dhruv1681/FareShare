@@ -1,0 +1,35 @@
+ActivityPaginationSuccessResponse:
+    description: Acitvity Pagination Successfull
+    content:
+      application/json:
+        examples:
+          Activity pagination Success:
+            value:
+              data:
+              - id: 65795db5852fe9f5a4a26329
+                entity: transaction
+                entityId: 65795db5852fe9f5a4a26318
+                textData:
+                - text: Dhruv
+                  bold: true
+                - text: added
+                  bold: false
+                - text: d
+                  bold: true
+                - text: in
+                  bold: false
+                - bold: true
+                text: You owe $20
+                textColor: red
+                username: Dinesh
+                read: false
+                createdOn: '2023-12-13T07:31:01.490Z'
+                updatedOn:
+                createdBy:
+                updatedBy:
+                deleted: false
+              meta:
+                page: 1
+                pageSize: 2
+                count: 1
+                totalPages: 1

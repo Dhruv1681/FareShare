@@ -1,0 +1,131 @@
+ExpenseRequestBody:
+  required: true
+  content:
+    application/json:
+      examples:
+        Split Equally:
+          value:
+            description: d
+            amount: 20
+            date: '2023-02-01'
+            category: Games
+            groupId: ''
+            paidBy: Tanmay
+            split:
+              type: equal
+              payload:
+              - Dinesh
+              - Dhruv
+
+
+        Split Unequally:
+          value:
+            description: d
+            amount: 200.1
+            date: '2023-02-01'
+            category: Games
+            groupId: ''
+            paidBy: Dinesh
+            split:
+              type: unequal
+              payload:
+                Dinesh: 50.1
+                Tanmay: 75
+                Dhruv: 75
+                Khushank: 0
+
+
+        Split by shares:
+          value:
+            description: d
+            amount: 80
+            date: '2023-02-01'
+            groupId: 657805edf341bf89269d36f7
+            category: Games
+            paidBy: Tanmay
+            split:
+              type: shares
+              payload:
+                Dhruv: 1
+                Dinesh: 1
+          
+        Split by percentage:
+          value:
+            description: d
+            amount: 200.1
+            date: '2023-02-01'
+            category: Games
+            groupId: ''
+            paidBy: Dinesh
+            split:
+              type: percentage
+              payload:
+                Dinesh: 50.1
+                Tanmay: 49
+                Dhruv: 0.5
+                Khushank: 0.4
+
+
+        Split by reimbursement:
+          value:
+            description: d
+            amount: 20
+            date: '2023-02-01'
+            category: Games
+            groupId: ''
+            paidBy: Tanmay
+            split:
+              type: reimburse
+              payload:
+              - Dinesh
+              - Dhruv
+
+        
+        Split by settlement:
+          value:
+            description: d
+            amount: 10
+            date: '2023-02-01'
+            category: Games
+            groupId: 657805edf341bf89269d36f7
+            paidBy: Tanmay
+            split:
+              type: settlement
+              payload: Dhruv
+
+
+        Split itemized expenses:
+          value:
+            description: d
+            amount: 200.1
+            date: '2023-02-01'
+            category: Games
+            groupId: ''
+            paidBy: Dinesh
+            split:
+              type: itemized
+              payload:
+                items:
+                - description: Gas
+                  amount: 50
+                  users:
+                    Tanmay: 12.5
+                    Dinesh: 12.5
+                    Khushank: 12.5
+                    Dhruv: 12.5
+                - description: Food
+                  amount: 120
+                  users:
+                    Khushank: 30
+                    Tanmay: 30
+                    Dhruv: 60
+                tax:
+                  amount: 6
+                  users:
+                    Dinesh: 3
+                    Tanmay: 2.99
+                    Dhruv: 0.01
+                tip:
+                  amount: 15
+                  users:
+                    Dinesh: 15

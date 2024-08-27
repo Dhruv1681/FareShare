@@ -1,0 +1,41 @@
+get:
+    parameters:
+      - $ref: '../../components/components.yaml#/parameters/CategoryQueryParam'
+    tags:
+      - Groups
+    summary: Get all Groups
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+          $ref: '../../components/components.yaml#/responses/GroupSearchSuccess'
+
+post:
+    tags:
+      - Groups
+    summary: Create a new Group
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/components.yaml#/schemas/GroupCreateRequest'
+          examples:
+            groupCreationExample:
+              value:
+                name: 'A new FairShare Group'
+                image: 'https://example.com/path/to/image.png'
+                users: 
+                  user1:
+                    name: 'John'
+                    email: 'john@gmail.com'
+                  user2:
+                    name: 'Richard'
+                    email: 'richard@gmail.com'
+                grouptype: 'Home'
+                simplifiedDebt: true
+    responses:
+      '201':
+          $ref: '../../components/components.yaml#/responses/GroupCreateSuccess'

@@ -1,0 +1,12 @@
+ExpensesGetSuccess:
+    description: Successful response for one expense data
+    content:
+      application/json:
+        example:
+          expenseId: 1
+          description: 'Dinner with friends'
+          amount: 50.00
+          type: 'equal'
+          personalShare: 35.0
+          category: 'Food'
+          date: '2023-01-15'

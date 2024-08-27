@@ -1,0 +1,20 @@
+AdminLedgerSuccess:
+    description: Ledgers Recalculated succesfully
+    content:
+      application/json:
+        examples:
+          Ledgers Calculated Successfully:
+            value:
+              message: "Ledgers recalculated successfully"
+          Email Sent Successfully:
+            value:
+              message: "Mail sent successfully"
+
+AdminLedgerFail:
+    description: Ledgers Recalculated succesfully
+    content:
+      application/json:
+        examples:
+          Unauthorized Access:
+            value:
+              message: "Unauthorized Access"

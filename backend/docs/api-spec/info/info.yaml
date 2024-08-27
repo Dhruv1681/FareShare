@@ -1,0 +1,52 @@
+title: FairShare API - OpenAPI 3.1
+version: '1.0'
+description: >-
+  Welcome to the FairShare API documentation, offering seamless management of
+  expenses, balances, and financial transactions. FairShare provides versatile
+  splitting options enabling users to distribute expenses with ease.
+
+
+  - **Equal Split:** Equally divide expenses among participants.
+
+  - **Un-equal Split:** Distribute expenses unequally based on user-defined
+  criteria.
+
+  - **Percentage Split:** Allocate expenses with precision using specified
+  percentage shares.
+
+  - **Share-based Split:** Streamline cost distribution with predefined share
+  values.
+
+  - **Itemized Expenses:** Break down expenses into individual items, with the
+  added option to calculate taxes based on individual spending. Users retain
+  the flexibility to override default tax calculations if necessary.
+
+  - **Reimbursement:** Facilitate easy settlement of shared expenses, ensuring
+  each participant receives their fair share.
+
+
+  ## Additional Features:
+
+
+  - **Cash Payment Recording:** Effortlessly record cash transactions,
+  seamlessly integrating them into your expense tracking.
+
+  - **Expense Analytics:** Gain valuable insights into your spending patterns
+  with detailed analytics related to expense data.
+
+  - **Attaching Files:** Enhance your transaction details by attaching bills,
+  invoices, and relevant files.
+
+  - **Send Reminders to Users:** Streamline payment processes by sending
+  reminders to users, ensuring timely settlements.
+
+
+  Explore the full capabilities of the FairShare API to simplify your
+  financial tracking, enhance collaboration, and foster transparent expense
+  management.
+
+
+  Useful links:
+
+  - [GitHub
+  Repository](https://github.com/info-6150-fall-2023/final-project-splitcode)

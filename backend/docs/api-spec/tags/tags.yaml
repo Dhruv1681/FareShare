@@ -1,0 +1,20 @@
+- name: Authentication
+  description: Authetication to generate Bearer Tokens
+- name: Expenses
+  description: Expenses added in the application
+- name: Groups
+  description: Groups present in the application   
+- name: Friends
+  description: Friends of the user
+- name: Account
+  description: User Account related settings
+- name: Analytics
+  description: Analytics on the spending trends
+- name: Files
+  description: Retrieve files from server
+- name: Users
+  description: Users of the application
+- name: Activity
+  description: Activity of the user
+- name: Admin
+  description: Adming related APIs

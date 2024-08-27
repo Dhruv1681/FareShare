@@ -1,0 +1,45 @@
+// SCSS to define all mixins
+
+@mixin margin($property, $value) {
+    @include spacing-generic(margin, $property, $value);
+}
+
+@mixin padding($property, $value) {
+    @include spacing-generic(padding, $property, $value);
+}
+
+@mixin spacing-generic($target, $property, $value) {
+    @include property-generic(#{$target}-#{$property}, $value);
+}
+
+@mixin zero($target) {
+    #{$target}: 0;
+}
+
+$default-icon-height: 2rem;
+$default-icon-width: 2rem;
+
+@mixin icon(
+    $icon-file, 
+    $width: $default-icon-width, 
+    $height: $default-icon-height, 
+    $background-repeat: no-repeat,
+    $background-size: cover) {
+    
+    width: $width;
+    height: $height;
+    background-image: url('#{$icons-path}/#{$icon-file}');
+    background-repeat: $background-repeat;
+    background-size: $background-size;
+}
+
+@mixin img($img-file, $background-repeat: no-repeat, $background-size: cover) {
+    background-image: url('#{$img-path}/#{$img-file}');
+    background-repeat: $background-repeat;
+    background-size: $background-size;
+    background-position: center center;
+}
+
+@mixin property-generic($property, $value) {
+    #{$property}: $value;
+}

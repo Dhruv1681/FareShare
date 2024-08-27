@@ -1,0 +1,7 @@
+GroupIdQueryParam:
+    name: groupId
+    in: query
+    description: The ID of the group
+    required: true
+    schema:
+      type: string
